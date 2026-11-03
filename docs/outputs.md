@@ -59,7 +59,7 @@ and filtering, batch structure, output summary.
 | `parameters` | every effective parameter |
 | `param_hash` | 12-character digest of the parameters, excluding paths |
 | `results` | samples and analytes in/out, exclusions, group sizes |
-| `timings_s` | per-step and total wall time |
+| `timings_s` | per-step and total wall time. `total_s` is the only complete figure: the report footer is rendered before the run ends, so the number it shows covers everything up to report rendering and is smaller by the report and manifest steps |
 | `environment` | Python, platform, numpy and pandas versions |
 | `outputs` | path and SHA-256 of every file written |
 | `warnings` | anything the run wants you to know (skipped LoD filter, pooled grouping, ...) |

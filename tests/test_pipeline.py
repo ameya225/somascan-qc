@@ -164,3 +164,13 @@ def test_reproducible_outputs(fixture, tmp_path):
     with open(m2["outputs"]["report"]["path"]) as fh:
         h2 = fh.read()
     assert len(h1) == len(h2)
+
+
+def test_report_timing_is_labelled_as_partial(fixture, tmp_path):
+    """The report footer is rendered before the run ends; it must not claim to be the total."""
+    man = run({"input_adat": fixture[0], "output_dir": str(tmp_path / "t")})
+    with open(man["outputs"]["report"]["path"]) as fh:
+        html = fh.read()
+    assert "elapsed up to report rendering" in html
+    assert "wall time" not in html
+    assert man["timings_s"]["total_s"] >= man["timings_s"]["report_s"]

@@ -16,6 +16,14 @@ All notable changes to this project are documented here. The format follows
   issue and pull-request templates, `Makefile`, pinned dependency lock files and
   extended documentation under `docs/`.
 
+### Fixed
+- The HTML report footer labelled its elapsed time as the run's wall time, but the
+  report is rendered before the run ends, so the figure was smaller than `total_s` in
+  the manifest (9.5 s against 11.6 s on the 11K test file). The footer now reads
+  "N s elapsed up to report rendering (total run time is in the run manifest)" and the
+  summary card is labelled "runtime to report"; footer + `report_s` reconciles with
+  `total_s`. `docs/outputs.md` states the relationship.
+
 ### Changed
 - The synthetic-ADAT generator moved from `tests/make_fixture.py` into the installable
   package as `somascan_qc.simulate`, so it ships with the container.

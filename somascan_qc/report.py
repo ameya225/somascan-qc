@@ -338,8 +338,10 @@ def build_report(ctx: dict) -> str:
     parts.append(_tbl(ctx["output_table"]))
     parts.append(f'<div class="note">{ctx["output_note"]}</div>')
 
-    parts.append(f"""<footer>Pipeline: somascan_qc v{ctx['run']['version']} &middot;
- config digest <code>{ctx['run']['param_hash']}</code> &middot;
- input SHA-256 <code>{ctx['run']['input_sha256'][:16]}...</code> &middot;
- wall time {ctx['run']['elapsed_s']:.1f} s</footer></div></body></html>""")
+    run = ctx["run"]
+    parts.append(
+        f'<footer>Pipeline: somascan_qc v{run["version"]} &middot;'
+        f' config digest <code>{run["param_hash"]}</code> &middot;'
+        f' input SHA-256 <code>{run["input_sha256"][:16]}...</code>'
+        f'{run["elapsed_note"]}</footer></div></body></html>')
     return "\n".join(parts)

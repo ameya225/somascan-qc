@@ -331,7 +331,8 @@ def _report_context(adat, p, sqc, aqc, det_table, groups, mat, mat_rfu, lod,
              ("analytes in", f"{adat.n_analytes:,}"),
              ("analytes retained", f"{int(keep_analytes.sum()):,}"),
              ("flagged, retained", f"{int(aqc.loc[keep_analytes, 'flag_any'].sum()):,}"),
-             ("runtime", "-" if p["deterministic_report"] else f"{elapsed:.0f} s")]
+             ("runtime to report",
+              "-" if p["deterministic_report"] else f"{elapsed:.0f} s")]
 
     return {
         "run": {"input_file": os.path.basename(p["input_adat"]),
@@ -340,7 +341,10 @@ def _report_context(adat, p, sqc, aqc, det_table, groups, mat, mat_rfu, lod,
                               else _dt.datetime.now().strftime("%Y-%m-%d %H:%M")),
                 "version": __version__, "param_hash": param_hash(p),
                 "input_sha256": adat.sha256,
-                "elapsed_s": (0.0 if p["deterministic_report"] else elapsed)},
+                "elapsed_s": (0.0 if p["deterministic_report"] else elapsed),
+                "elapsed_note": ("" if p["deterministic_report"] else
+                                 f" &middot; {elapsed:.1f} s elapsed up to report "
+                                 "rendering (total run time is in the run manifest)")},
         "figures": figs, "summary": {"cards": cards}, "provenance": prov,
         "params_table": ptab, "sample_flag_table": sft, "analyte_flag_table": aft,
         "excluded_samples": excl_tbl, "group_table": gtab, "output_table": otab,
