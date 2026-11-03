@@ -1,0 +1,41 @@
+name: Bug report
+description: Something failed or produced an unexpected result
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include the exact command and the full error message.
+      render: shell
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations: {required: true}
+  - type: textarea
+    id: manifest
+    attributes:
+      label: Run manifest
+      description: >-
+        Paste the `parameters`, `results` and `environment` blocks of
+        `*_run_manifest.json`. Please do not attach study data.
+      render: json
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `somascan-qc --version`
+    validations: {required: true}
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      options: [Docker, conda, pip, other]
+    validations: {required: true}
+  - type: input
+    id: platform
+    attributes:
+      label: SomaScan menu and matrix
+      description: e.g. 11K, EDTA plasma, v5.0

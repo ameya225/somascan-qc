@@ -1,0 +1,25 @@
+# TODO before publishing: replace the author block and the repository URL.
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "somascan-qc: reproducible QC and filtering for SomaScan ADAT data"
+abstract: >-
+  A command-line pipeline that converts an ANML-normalized SomaLogic SomaScan ADAT
+  file into an analysis-ready protein x sample matrix with per-sample and per-analyte
+  quality control, blank-based detectability filtering, a self-contained HTML QC
+  report and a checksum-bearing run manifest.
+version: 1.1.0
+date-released: "2026-11-03"
+license: MIT
+type: software
+repository-code: "https://github.com/ORG/somascan-qc"
+keywords:
+  - proteomics
+  - SomaScan
+  - SomaLogic
+  - aptamer
+  - quality control
+  - reproducible research
+authors:
+  - family-names: "FAMILY-NAME"
+    given-names: "GIVEN-NAME"
+    affiliation: "AFFILIATION"

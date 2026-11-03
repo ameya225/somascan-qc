@@ -2,11 +2,10 @@
 from __future__ import annotations
 
 import base64
-import datetime as _dt
 import io
-from typing import Dict, List
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,7 +42,7 @@ def _band(ax, lo, hi, label=None):
 
 
 # --------------------------------------------------------------------------- figures
-def fig_norm_scale(sqc: pd.DataFrame, p: Dict) -> str:
+def fig_norm_scale(sqc: pd.DataFrame, p: dict) -> str:
     cols = [c for c in sqc.columns if c.startswith("NormScale") or c.startswith("HybControl")]
     if not cols:
         return ""
@@ -54,8 +53,10 @@ def fig_norm_scale(sqc: pd.DataFrame, p: Dict) -> str:
     for ax, c in zip(axes, cols):
         data = [study.loc[study.PlateId.eq(pl), c].dropna().values if "PlateId" in study
                 else study[c].dropna().values for pl in plates]
-        bp = ax.boxplot(data, patch_artist=True, widths=0.6, flierprops=dict(
-            marker="o", markersize=2, markerfacecolor="#718096", markeredgecolor="none"))
+        bp = ax.boxplot(
+            data, patch_artist=True, widths=0.6,
+            flierprops={"marker": "o", "markersize": 2,
+                        "markerfacecolor": "#718096", "markeredgecolor": "none"})
         for i, box in enumerate(bp["boxes"]):
             box.set(facecolor=PALETTE[i % len(PALETTE)], alpha=0.45, edgecolor="#2d3748")
         for med in bp["medians"]:
@@ -68,7 +69,7 @@ def fig_norm_scale(sqc: pd.DataFrame, p: Dict) -> str:
     return _png(fig)
 
 
-def fig_anml(sqc: pd.DataFrame, p: Dict) -> str:
+def fig_anml(sqc: pd.DataFrame, p: dict) -> str:
     cols = [c for c in sqc.columns if c.startswith("ANMLFractionUsed")]
     if not cols:
         return ""
@@ -81,7 +82,9 @@ def fig_anml(sqc: pd.DataFrame, p: Dict) -> str:
     ax.axvline(p["anml_fraction_min"], color=FAIL, ls="--", lw=1.1)
     ax.text(p["anml_fraction_min"], ax.get_ylim()[1] * 0.95, f"  min {p['anml_fraction_min']}",
             color=FAIL, fontsize=8, va="top")
-    ax.set_xlabel("ANML fraction used"); ax.set_ylabel("samples"); ax.legend(fontsize=8)
+    ax.set_xlabel("ANML fraction used")
+    ax.set_ylabel("samples")
+    ax.legend(fontsize=8)
     ax.set_title("Fraction of analytes used by ANML normalization")
     return _png(fig)
 
@@ -106,17 +109,19 @@ def fig_sample_intensity(sqc: pd.DataFrame) -> str:
                   title="plate", title_fontsize=7.5)
     else:
         ax.scatter(np.arange(len(study)), study.median_log2_rfu, s=7, color=PALETTE[0])
-    ax.set_xlabel("sample (ordered within plate)"); ax.set_ylabel("median log2 RFU")
+    ax.set_xlabel("sample (ordered within plate)")
+    ax.set_ylabel("median log2 RFU")
     ax.set_title("Per-sample median intensity; red rings = excluded samples")
     return _png(fig)
 
 
-def fig_sample_hists(sqc: pd.DataFrame, p: Dict) -> str:
+def fig_sample_hists(sqc: pd.DataFrame, p: dict) -> str:
     study = sqc[sqc.SampleType.eq("Sample")]
     fig, axes = plt.subplots(1, 2, figsize=(7.4, 3.0))
     axes[0].hist(study.cor_to_median.dropna(), bins=40, color=PALETTE[0], alpha=0.8)
     axes[0].axvline(p["min_correlation_to_median"], color=FAIL, ls="--", lw=1.1)
-    axes[0].set_xlabel("Pearson r to study median profile"); axes[0].set_ylabel("samples")
+    axes[0].set_xlabel("Pearson r to study median profile")
+    axes[0].set_ylabel("samples")
     axes[0].set_title("Global sample concordance")
     if study.detect_rate.notna().any():
         axes[1].hist(study.detect_rate.dropna(), bins=40, color=PALETTE[2], alpha=0.8)
@@ -136,7 +141,9 @@ def fig_intensity_by_type(rfu: pd.DataFrame, stype: pd.Series) -> str:
         vals = np.log2(rfu.loc[stype.eq(t).values].clip(lower=1e-6).values.ravel())
         ax.hist(vals, bins=120, density=True, histtype="step", lw=1.5,
                 color=PALETTE[i % len(PALETTE)], label=f"{t} (n={(stype==t).sum()})")
-    ax.set_xlabel("log2 RFU"); ax.set_ylabel("density"); ax.legend(fontsize=8)
+    ax.set_xlabel("log2 RFU")
+    ax.set_ylabel("density")
+    ax.legend(fontsize=8)
     ax.set_title("Signal distribution by well type")
     return _png(fig)
 
@@ -146,7 +153,8 @@ def fig_pca(log2_mat: pd.DataFrame, plate: pd.Series, group: pd.Series) -> str:
         return ""
     X = log2_mat.values.astype(float)
     X = X - X.mean(axis=0, keepdims=True)
-    sd = X.std(axis=0, ddof=1); sd[sd == 0] = 1
+    sd = X.std(axis=0, ddof=1)
+    sd[sd == 0] = 1
     X = X / sd
     U, S, _ = np.linalg.svd(X, full_matrices=False)
     pc = U[:, :2] * S[:2]
@@ -162,7 +170,8 @@ def fig_pca(log2_mat: pd.DataFrame, plate: pd.Series, group: pd.Series) -> str:
             m = (lab == lv).values
             ax.scatter(pc[m, 0], pc[m, 1], s=11, alpha=0.8, edgecolors="none",
                        color=PALETTE[i % len(PALETTE)], label=lv)
-        ax.set_xlabel(f"PC1 ({var[0]:.1f}%)"); ax.set_ylabel(f"PC2 ({var[1]:.1f}%)")
+        ax.set_xlabel(f"PC1 ({var[0]:.1f}%)")
+        ax.set_ylabel(f"PC2 ({var[1]:.1f}%)")
         ax.set_title(f"PCA coloured by {name}")
         if lab.nunique() <= 10:
             ax.legend(fontsize=7, markerscale=1.4)
@@ -170,14 +179,15 @@ def fig_pca(log2_mat: pd.DataFrame, plate: pd.Series, group: pd.Series) -> str:
     return _png(fig)
 
 
-def fig_analyte_panels(aqc: pd.DataFrame, p: Dict) -> str:
+def fig_analyte_panels(aqc: pd.DataFrame, p: dict) -> str:
     fig, axes = plt.subplots(1, 3, figsize=(10.6, 3.1))
     prot = aqc[~aqc.flag_not_protein]
     if prot.detect_rate_overall.notna().any():
         axes[0].hist(prot.detect_rate_overall.dropna(), bins=50, color=PALETTE[2], alpha=0.85)
         axes[0].axvline(p["min_detect_frac"], color=FAIL, ls="--", lw=1.1)
         axes[0].set_yscale("log")
-    axes[0].set_xlabel("fraction of samples > LoD"); axes[0].set_ylabel("analytes (log scale)")
+    axes[0].set_xlabel("fraction of samples > LoD")
+    axes[0].set_ylabel("analytes (log scale)")
     axes[0].set_title("Detectability")
     if prot.qc_replicate_cv.notna().any():
         cv = prot.qc_replicate_cv.dropna()
@@ -187,26 +197,29 @@ def fig_analyte_panels(aqc: pd.DataFrame, p: Dict) -> str:
         axes[1].set_title(f"QC-replicate CV (median {cv.median():.3f})")
     else:
         axes[1].set_title("QC-replicate CV (no QC wells)")
-    axes[1].set_xlabel("intra-plate CV"); axes[1].set_ylabel("analytes")
+    axes[1].set_xlabel("intra-plate CV")
+    axes[1].set_ylabel("analytes")
     flags = [c for c in aqc.columns if c.startswith("flag_") and c != "flag_any"]
     counts = aqc[flags].sum().sort_values()
     axes[2].barh([f.replace("flag_", "") for f in counts.index], counts.values,
                  color=PALETTE[0], alpha=0.85)
     for y, v in enumerate(counts.values):
         axes[2].text(v, y, f" {int(v)}", va="center", fontsize=7.5)
-    axes[2].set_xlabel("analytes flagged"); axes[2].set_title("Flag frequency")
+    axes[2].set_xlabel("analytes flagged")
+    axes[2].set_title("Flag frequency")
     axes[2].margins(x=0.18)
     return _png(fig)
 
 
-def fig_waterfall(steps: List[tuple]) -> str:
+def fig_waterfall(steps: list[tuple]) -> str:
     labels = [s[0] for s in steps][::-1]
     vals = [s[1] for s in steps][::-1]
     fig, ax = plt.subplots(figsize=(6.4, 0.42 * len(labels) + 1.4))
     ax.barh(labels, vals, color=PALETTE[0], alpha=0.85)
     for y, v in enumerate(vals):
         ax.text(v, y, f" {v:,}", va="center", fontsize=8)
-    ax.set_xlabel("analytes retained"); ax.set_title("Analyte filtering waterfall")
+    ax.set_xlabel("analytes retained")
+    ax.set_title("Analyte filtering waterfall")
     ax.margins(x=0.16)
     return _png(fig)
 
@@ -225,7 +238,8 @@ def fig_plate_effect(log2_mat: pd.DataFrame, plate: pd.Series) -> str:
     for m in bp["medians"]:
         m.set(color="#1a202c", lw=1.2)
     ax.set_xticklabels(plates, rotation=45, ha="right", fontsize=7)
-    ax.set_ylabel("median log2 RFU"); ax.set_title("Residual plate effect after filtering")
+    ax.set_ylabel("median log2 RFU")
+    ax.set_title("Residual plate effect after filtering")
     return _png(fig)
 
 
@@ -247,7 +261,8 @@ img{max-width:100%;margin:10px 0;background:#fff;border:1px solid #e2e8f0;border
 .card .v{font-size:22px;font-weight:600} .card .l{font-size:11.5px;color:#4a5568;margin-top:2px}
 .pass{color:#2f855a} .warn{color:#b7791f} .fail{color:#c53030}
 code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:12px}
-.note{background:#fffaf0;border-left:3px solid #dd6b20;padding:9px 13px;font-size:12.5px;margin:12px 0}
+.note{background:#fffaf0;border-left:3px solid #dd6b20;padding:9px 13px;
+font-size:12.5px;margin:12px 0}
 footer{margin-top:40px;font-size:11.5px;color:#718096;border-top:1px solid #e2e8f0;padding-top:12px}
 """
 
@@ -270,7 +285,7 @@ def _img(b64: str, cap: str = "") -> str:
     return f'<img src="data:image/png;base64,{b64}"/>{c}'
 
 
-def build_report(ctx: Dict) -> str:
+def build_report(ctx: dict) -> str:
     """Assemble the HTML QC report from a context dict built by the pipeline."""
     f = ctx["figures"]
     s = ctx["summary"]
@@ -294,8 +309,9 @@ def build_report(ctx: Dict) -> str:
 
     parts.append("<h2>3. Sample-level QC</h2>")
     parts.append(_tbl(ctx["sample_flag_table"], num_cols=("samples flagged", "% of study samples")))
-    parts.append(_img(f.get("norm_scale"), "Scale factors outside the acceptance window indicate "
-                                           "a sample whose normalization is not supported by the data."))
+    parts.append(_img(f.get("norm_scale"),
+                      "Scale factors outside the acceptance window indicate a sample whose "
+                      "normalization is not supported by the data."))
     parts.append(_img(f.get("anml")))
     parts.append(_img(f.get("sample_intensity")))
     parts.append(_img(f.get("sample_hists")))

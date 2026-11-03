@@ -1,6 +1,4 @@
 """Unit and end-to-end tests. Run with:  pytest -q"""
-import hashlib
-import json
 import os
 import sys
 
@@ -9,14 +7,13 @@ import pandas as pd
 import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from make_fixture import write_adat                      # noqa: E402
-from somascan_qc.adat import read_adat                   # noqa: E402
+from somascan_qc.adat import read_adat  # noqa: E402
 from somascan_qc.analyteqc import limits_of_detection, replicate_cv  # noqa: E402
 from somascan_qc.params import merge_params, param_hash  # noqa: E402
-from somascan_qc.pipeline import run                     # noqa: E402
-from somascan_qc.sampleqc import sample_qc               # noqa: E402
+from somascan_qc.pipeline import run  # noqa: E402
+from somascan_qc.sampleqc import sample_qc  # noqa: E402
+from somascan_qc.simulate import write_adat  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -41,7 +38,8 @@ def test_parser_dimensions(fixture):
 
 def test_parser_handles_missing_spacer_column(tmp_path):
     p1, p2 = str(tmp_path / "a.adat"), str(tmp_path / "b.adat")
-    write_adat(p1, spacer=True); write_adat(p2, spacer=False)
+    write_adat(p1, spacer=True)
+    write_adat(p2, spacer=False)
     a, b = read_adat(p1), read_adat(p2)
     assert a.rfu.shape == b.rfu.shape
     assert np.allclose(a.rfu.values, b.rfu.values)
@@ -49,7 +47,8 @@ def test_parser_handles_missing_spacer_column(tmp_path):
 
 
 def test_parser_rejects_non_adat(tmp_path):
-    p = tmp_path / "x.txt"; p.write_text("not an adat\n")
+    p = tmp_path / "x.txt"
+    p.write_text("not an adat\n")
     with pytest.raises(ValueError):
         read_adat(str(p))
 
@@ -121,7 +120,8 @@ def test_end_to_end(fixture, tmp_path):
     assert feat.flag_colcheck.sum() > 0
     assert mat.notna().all().all()
     assert 0 < mat.values.mean() < 20                           # log2 scale
-    html = open(man["outputs"]["report"]["path"]).read()
+    with open(man["outputs"]["report"]["path"]) as fh:
+        html = fh.read()
     assert "SomaScan QC report" in html and "data:image/png;base64," in html
     assert set(smeta["group"]) == {"case", "control"}
 
@@ -159,6 +159,8 @@ def test_reproducible_outputs(fixture, tmp_path):
     assert all(m1["outputs"][k]["sha256"] == m2["outputs"][k]["sha256"] for k in data_keys)
     assert m1["param_hash"] == m2["param_hash"]
     # the HTML differs only in its timestamp line
-    h1 = open(m1["outputs"]["report"]["path"]).read()
-    h2 = open(m2["outputs"]["report"]["path"]).read()
+    with open(m1["outputs"]["report"]["path"]) as fh:
+        h1 = fh.read()
+    with open(m2["outputs"]["report"]["path"]) as fh:
+        h2 = fh.read()
     assert len(h1) == len(h2)

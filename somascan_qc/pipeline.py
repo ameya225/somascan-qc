@@ -7,7 +7,6 @@ import json
 import os
 import platform
 import time
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -36,7 +35,7 @@ def _write(df: pd.DataFrame, path: str, index_label: str, compress: bool = False
 
 
 def resolve_groups(adat: Adat, samples: pd.DataFrame, group_col: str | None,
-                   warnings: List[str]) -> pd.Series:
+                   warnings: list[str]) -> pd.Series:
     """Resolve the grouping variable from a sample-annotation column of the ADAT."""
     if group_col in (None, "", "none"):
         warnings.append(
@@ -55,7 +54,7 @@ def resolve_groups(adat: Adat, samples: pd.DataFrame, group_col: str | None,
     return g.rename("group")
 
 
-def run(params: Dict) -> Dict:
+def run(params: dict) -> dict:
     """Execute the pipeline. Returns the run manifest."""
     t0 = time.time()
     p = merge_params(params)
@@ -63,8 +62,8 @@ def run(params: Dict) -> Dict:
         raise ValueError("input_adat is required")
     outdir = p["output_dir"]
     os.makedirs(outdir, exist_ok=True)
-    warnings: List[str] = []
-    timings: Dict[str, float] = {}
+    warnings: list[str] = []
+    timings: dict[str, float] = {}
 
     # 1 -------------------------------------------------------------- read
     t = time.time()
@@ -155,7 +154,7 @@ def run(params: Dict) -> Dict:
     pre = os.path.join(outdir, p["output_prefix"])
     gz = bool(p["compress_outputs"])
     suffix = {"log2": "log2", "log10": "log10", "none": "rfu"}[p["log_transform"]]
-    outputs: Dict[str, str] = {}
+    outputs: dict[str, str] = {}
     outputs["matrix"] = _write(mat, f"{pre}_protein_x_sample_{suffix}.tsv", "SeqId", gz)
     if p["write_rfu_matrix"] and p["log_transform"] != "none":
         outputs["matrix_rfu"] = _write(mat_rfu, f"{pre}_protein_x_sample_rfu.tsv", "SeqId", gz)
@@ -223,7 +222,7 @@ def _pct(n, d):
 
 def _report_context(adat, p, sqc, aqc, det_table, groups, mat, mat_rfu, lod,
                     is_study, is_buffer, is_qc, keep_samples, keep_analytes,
-                    warnings, elapsed) -> Dict:
+                    warnings, elapsed) -> dict:
     report._style()
     study_sqc = sqc[sqc.SampleType.eq("Sample")]
     n_study = int(is_study.sum())
@@ -235,7 +234,8 @@ def _report_context(adat, p, sqc, aqc, det_table, groups, mat, mat_rfu, lod,
         "sample_intensity": report.fig_sample_intensity(sqc),
         "sample_hists": report.fig_sample_hists(sqc, p),
         "intensity_by_type": report.fig_intensity_by_type(
-            adat.rfu, adat.samples.get("SampleType", pd.Series("Sample", index=adat.samples.index))),
+            adat.rfu,
+            adat.samples.get("SampleType", pd.Series("Sample", index=adat.samples.index))),
         "analyte_panels": report.fig_analyte_panels(aqc, p),
     }
     log2_mat = mat.T if p["log_transform"] == "log2" else np.log2(mat_rfu.T.clip(lower=1e-6))

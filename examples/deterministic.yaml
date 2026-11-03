@@ -1,0 +1,4 @@
+# Parameters used by the CI reproducibility check: suppresses the report timestamp so
+# that every output file, including the HTML, is byte-identical between runs.
+deterministic_report: true
+output_prefix: rep

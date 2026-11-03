@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -36,7 +35,7 @@ def _sha256(path: str, chunk: int = 1 << 20) -> str:
 class Adat:
     """Parsed ADAT: header metadata, analyte annotation, sample annotation, RFU."""
 
-    header: Dict[str, str]
+    header: dict[str, str]
     analytes: pd.DataFrame  # index = SeqId, columns = COL_DATA fields
     samples: pd.DataFrame   # index = sample key, columns = ROW_DATA fields
     rfu: pd.DataFrame       # index = sample key, columns = SeqId
@@ -51,17 +50,17 @@ class Adat:
     def n_analytes(self) -> int:
         return self.rfu.shape[1]
 
-    def sample_types(self) -> Dict[str, int]:
+    def sample_types(self) -> dict[str, int]:
         if "SampleType" not in self.samples:
             return {}
         return self.samples["SampleType"].value_counts().to_dict()
 
-    def subset_samples(self, mask) -> "Adat":
+    def subset_samples(self, mask) -> Adat:
         mask = np.asarray(mask, dtype=bool)
         return Adat(self.header, self.analytes, self.samples.loc[mask].copy(),
                     self.rfu.loc[mask].copy(), self.path, self.sha256)
 
-    def grouping_candidates(self, max_levels: int = 50) -> List[str]:
+    def grouping_candidates(self, max_levels: int = 50) -> list[str]:
         """Sample-annotation columns usable as a grouping variable.
 
         A column qualifies when it is fully populated across study samples,
@@ -89,7 +88,7 @@ class Adat:
 
 def read_adat(path: str) -> Adat:
     """Parse an ADAT file into an :class:`Adat`."""
-    with open(path, "r", encoding="utf-8", errors="replace") as fh:
+    with open(path, encoding="utf-8", errors="replace") as fh:
         lines = [ln.rstrip("\r\n") for ln in fh]
 
     sections = {}
@@ -101,14 +100,14 @@ def read_adat(path: str) -> Adat:
             raise ValueError(f"{path}: not a valid ADAT - missing {req} section")
 
     # ---- header -------------------------------------------------------
-    header: Dict[str, str] = {}
+    header: dict[str, str] = {}
     for ln in lines[sections.get("^HEADER", -1) + 1: sections["^COL_DATA"]]:
         if not ln.strip():
             continue
         parts = ln.split("\t")
         header[parts[0].lstrip("!").strip()] = parts[1].strip() if len(parts) > 1 else ""
 
-    def _named_row(start: int, end: int, key: str) -> List[str]:
+    def _named_row(start: int, end: int, key: str) -> list[str]:
         for ln in lines[start:end]:
             f = ln.split("\t")
             if f[0].strip().lstrip("!").lower() == key:

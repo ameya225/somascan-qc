@@ -1,4 +1,10 @@
-"""Generate a small synthetic ADAT for tests (same layout as a SomaLogic file)."""
+"""Generate a small synthetic ADAT with the same layout as a real SomaLogic file.
+
+Used by the test suite and by ``somascan-qc demo`` so an installation can be verified
+end to end without access to real study data. The simulated file contains deliberate
+problems - two bad wells, control analytes, non-human analytes and analytes sitting at
+the blank level - so that every filter has something to act on.
+"""
 from __future__ import annotations
 
 import numpy as np
@@ -38,10 +44,13 @@ def write_adat(path, n_analytes=60, n_per_plate=24, spacer=True, seed=0):
     seqids = [f"{10000+i}-{i%50}" for i in range(n_analytes)]
     analyte = {f: [] for f in COL_FIELDS}
     for i, sid in enumerate(seqids):
-        analyte["SeqId"].append(sid); analyte["SeqIdVersion"].append("3")
+        analyte["SeqId"].append(sid)
+        analyte["SeqIdVersion"].append("3")
         analyte["SomaId"].append(f"SL{i:06d}")
-        analyte["TargetFullName"].append(f"Protein {i}"); analyte["Target"].append(f"P{i}")
-        analyte["UniProt"].append(f"Q{i:05d}"); analyte["EntrezGeneID"].append(str(1000 + i))
+        analyte["TargetFullName"].append(f"Protein {i}")
+        analyte["Target"].append(f"P{i}")
+        analyte["UniProt"].append(f"Q{i:05d}")
+        analyte["EntrezGeneID"].append(str(1000 + i))
         analyte["EntrezGeneSymbol"].append(f"GENE{i}")
         analyte["Organism"].append("Mouse" if i % 20 == 0 else "Human")
         analyte["Units"].append("RFU")
@@ -67,7 +76,8 @@ def write_adat(path, n_analytes=60, n_per_plate=24, spacer=True, seed=0):
     pad = 1 if spacer else 0
     lead = len(ROW_FIELDS) + pad
     with open(path, "w", newline="") as fh:
-        w = lambda s: fh.write(s + "\r\n")
+        def w(s):
+            return fh.write(s + "\r\n")
         w("^HEADER")
         for k, v in [("!Version", "1.2"), ("!AssayVersion", "v5.0"),
                      ("!NormalizationAlgorithm", "ANML"), ("!StudyMatrix", "EDTA Plasma"),

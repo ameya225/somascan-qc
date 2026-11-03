@@ -3,9 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Dict
 
-DEFAULTS: Dict = {
+DEFAULTS: dict = {
     # ---- input / output -------------------------------------------------
     "input_adat": None,
     "output_dir": "somascan_qc_out",
@@ -48,13 +47,11 @@ DEFAULTS: Dict = {
     "deterministic_report": False,   # omit timestamp/runtime so the HTML is byte-reproducible
 }
 
-_NUMERIC = {k: (0.0, 1e6) for k in ("norm_scale_min", "norm_scale_max", "hyb_scale_min",
-                                    "hyb_scale_max", "lod_mad_multiplier", "max_intensity_mad_z")}
 _FRACTION = ["anml_fraction_min", "min_correlation_to_median", "sample_min_detect_rate",
              "min_detect_frac", "max_replicate_cv", "cal_qc_ratio_min", "cal_qc_ratio_max"]
 
 
-def merge_params(user: Dict | None) -> Dict:
+def merge_params(user: dict | None) -> dict:
     """Merge user settings over the defaults and validate."""
     p = dict(DEFAULTS)
     unknown = sorted(set(user or {}) - set(DEFAULTS))
@@ -78,7 +75,7 @@ def merge_params(user: Dict | None) -> Dict:
     return p
 
 
-def param_hash(p: Dict) -> str:
+def param_hash(p: dict) -> str:
     """Stable digest of the effective parameters (input path excluded)."""
     q = {k: v for k, v in p.items() if k not in ("input_adat", "output_dir")}
     return hashlib.sha256(json.dumps(q, sort_keys=True, default=str).encode()).hexdigest()[:12]

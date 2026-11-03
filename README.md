@@ -1,5 +1,9 @@
 # somascan-qc
 
+[![CI](https://github.com/ORG/somascan-qc/actions/workflows/ci.yml/badge.svg)](https://github.com/ORG/somascan-qc/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+
 Turn a SomaLogic **ADAT** file (ANML-normalized SomaScan 5K / 7K / 11K) into an
 **analysis-ready protein x sample matrix** plus a **self-contained HTML QC report**,
 in one command.
@@ -7,6 +11,9 @@ in one command.
 ```
 somascan-qc run -i mystudy.adat -o results -g SampleGroup
 ```
+
+No real data to hand? `somascan-qc demo` simulates an ADAT and runs the whole pipeline
+on it, which is also the fastest way to check that an install or container works.
 
 Everything the pipeline decided is written down: every sample and every analyte is
 kept in a QC table with one column per criterion, the exact parameters are stored in a
@@ -234,20 +241,27 @@ including that two runs produce identical checksums.
 ## 12. Layout
 
 ```
-somascan_pipeline/
+somascan-qc/
 ├── somascan_qc/
-│   ├── adat.py        ADAT reader (header, analyte and sample annotation, RFU)
-│   ├── params.py      defaults, validation, parameter digest
-│   ├── sampleqc.py    sample-level criteria
-│   ├── analyteqc.py   limits of detection, CV, analyte criteria, detectability filter
-│   ├── pipeline.py    orchestration, matrix build, outputs, manifest
-│   ├── report.py      figures and HTML report
-│   └── cli.py         command-line interface
-├── config/params.yaml fully commented parameter template
-├── tests/             synthetic-ADAT fixture + test suite
-├── environment.yml    conda environment
-├── Dockerfile         container image
-└── run_pipeline.sh    one-line wrapper
+│   ├── adat.py             ADAT reader (header, analyte and sample annotation, RFU)
+│   ├── params.py           defaults, validation, parameter digest
+│   ├── sampleqc.py         sample-level criteria
+│   ├── analyteqc.py        limits of detection, CV, analyte criteria, detectability filter
+│   ├── pipeline.py         orchestration, matrix build, outputs, manifest
+│   ├── report.py           figures and HTML report
+│   ├── simulate.py         synthetic ADAT generator (demo + tests)
+│   └── cli.py              command-line interface
+├── config/params.yaml      fully commented parameter template
+├── docs/                   parameter reference, QC methods, output schemas
+├── examples/               ready-made config files
+├── tests/                  test suite
+├── .github/workflows/ci.yml  tests, demo, reproducibility check, Docker build
+├── environment.yml         conda environment (portable)
+├── environment.lock.yml    pinned environment (exact tested versions)
+├── requirements-lock.txt   pinned pip layer
+├── Dockerfile              container image
+├── Makefile                make test | lint | demo | docker
+└── run_pipeline.sh         one-line wrapper
 ```
 
 Each module is importable on its own, e.g. to use only the reader:
@@ -256,3 +270,25 @@ Each module is importable on its own, e.g. to use only the reader:
 from somascan_qc.adat import read_adat
 adat = read_adat("mystudy.adat")       # adat.rfu, adat.samples, adat.analytes
 ```
+
+## 13. Documentation
+
+| Document | Contents |
+|---|---|
+| [`docs/parameters.md`](docs/parameters.md) | every parameter, its default and its meaning |
+| [`docs/qc_criteria.md`](docs/qc_criteria.md) | what each QC criterion tests, why, and what the pipeline deliberately does not do |
+| [`docs/outputs.md`](docs/outputs.md) | every output file and a column dictionary for each table |
+| [`CHANGELOG.md`](CHANGELOG.md) | release history |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | development setup and project conventions |
+
+## 14. Citing
+
+If this pipeline contributed to published work, please cite it using the metadata in
+[`CITATION.cff`](CITATION.cff) (GitHub renders a "Cite this repository" button from it),
+and cite SomaLogic's assay and normalization documentation for the upstream data.
+
+## 15. Licence
+
+MIT - see [`LICENSE`](LICENSE). The pipeline is independent of SomaLogic; "SomaScan",
+"SomaLogic" and "SOMAmer" are trademarks of their owner and are used here only to
+describe the data format this software reads.

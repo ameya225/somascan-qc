@@ -18,17 +18,15 @@ plus two standard data-driven outlier checks:
 """
 from __future__ import annotations
 
-from typing import Dict, List
-
 import numpy as np
 import pandas as pd
 
 
-def _numeric(df: pd.DataFrame, cols: List[str]) -> pd.DataFrame:
+def _numeric(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return df[cols].apply(pd.to_numeric, errors="coerce") if cols else pd.DataFrame(index=df.index)
 
 
-def sample_qc(samples: pd.DataFrame, rfu: pd.DataFrame, params: Dict,
+def sample_qc(samples: pd.DataFrame, rfu: pd.DataFrame, params: dict,
               detect_rate: pd.Series | None = None) -> pd.DataFrame:
     """Return a per-sample QC table with one boolean column per criterion."""
     p = params

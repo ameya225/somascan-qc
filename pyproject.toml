@@ -4,18 +4,55 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "somascan-qc"
-version = "1.0.0"
+version = "1.1.0"
 description = "Reproducible QC and filtering of ANML-normalized SomaScan ADAT files into an analysis-ready protein x sample matrix with an HTML QC report."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["proteomics", "SomaScan", "SomaLogic", "aptamer", "quality control", "ADAT"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
 dependencies = ["numpy>=1.22", "pandas>=1.5", "matplotlib>=3.6", "pyyaml>=6.0"]
 
 [project.optional-dependencies]
 test = ["pytest>=7"]
+dev = ["ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://github.com/ORG/somascan-qc"
+Documentation = "https://github.com/ORG/somascan-qc#readme"
+Issues = "https://github.com/ORG/somascan-qc/issues"
+Changelog = "https://github.com/ORG/somascan-qc/blob/main/CHANGELOG.md"
 
 [project.scripts]
 somascan-qc = "somascan_qc.cli:main"
 
 [tool.setuptools]
 packages = ["somascan_qc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["error::FutureWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = ["E741", "SIM108"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]

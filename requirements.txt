@@ -1,0 +1,5 @@
+# Minimum supported versions (the conda environment or `pip install .` is preferred).
+numpy>=1.22
+pandas>=1.5
+matplotlib>=3.6
+pyyaml>=6.0

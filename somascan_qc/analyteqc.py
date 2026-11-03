@@ -1,8 +1,6 @@
 """Analyte-level (column) quality control and the detectability filter."""
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
-
 import numpy as np
 import pandas as pd
 
@@ -43,7 +41,8 @@ def replicate_cv(rfu: pd.DataFrame, plate: pd.Series | None) -> pd.Series:
 
 def analyte_qc(analytes: pd.DataFrame, study_rfu: pd.DataFrame, groups: pd.Series,
                lod: pd.Series | None, qc_rfu: pd.DataFrame | None,
-               qc_plate: pd.Series | None, params: Dict) -> Tuple[pd.DataFrame, pd.DataFrame | None]:
+               qc_plate: pd.Series | None, params: dict,
+               ) -> tuple[pd.DataFrame, pd.DataFrame | None]:
     """Annotate every analyte with QC flags and the filtering decision.
 
     Returns the per-analyte table and the per-group detection-rate table.
@@ -109,7 +108,7 @@ def analyte_qc(analytes: pd.DataFrame, study_rfu: pd.DataFrame, groups: pd.Serie
         a["n_groups_detected"] = np.nan
         a["flag_low_detection"] = False
 
-    drop_on: List[str] = [c for c in p["analyte_exclude_on"] if c in a.columns]
+    drop_on: list[str] = [c for c in p["analyte_exclude_on"] if c in a.columns]
     a["flag_any"] = a[[c for c in a.columns if c.startswith("flag_")]].any(axis=1)
     a["exclude"] = a[drop_on].any(axis=1) if drop_on else pd.Series(False, index=a.index)
     a["exclude_reason"] = [

@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+.env
+.DS_Store
+.idea/
+.vscode/
+
+# data and results are never committed
+*.adat
+*.adat.gz
+results/
+somascan_qc_out/
+somascan_qc_demo/
+out/
+*.tsv
+*.tsv.gz
+qc_report.html
+*_run_manifest.json

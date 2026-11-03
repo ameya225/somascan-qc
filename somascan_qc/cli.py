@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from . import __version__
@@ -20,7 +21,8 @@ def _load_config(path):
         try:
             import yaml
         except ImportError:
-            sys.exit("PyYAML is required for YAML configs; use a .json config or `pip install pyyaml`")
+            sys.exit("PyYAML is required for YAML configs; "
+                     "use a .json config or run `pip install pyyaml`")
         return yaml.safe_load(text) or {}
     return json.loads(text)
 
@@ -55,11 +57,43 @@ def build_parser() -> argparse.ArgumentParser:
     i.add_argument("-i", "--input-adat", required=True)
 
     sub.add_parser("params", help="print all parameters and their defaults")
+
+    s = sub.add_parser("simulate", help="write a small synthetic ADAT for testing")
+    s.add_argument("-o", "--output", default="example.adat")
+    s.add_argument("--n-analytes", type=int, default=60)
+    s.add_argument("--n-per-plate", type=int, default=24)
+    s.add_argument("--seed", type=int, default=0)
+
+    d = sub.add_parser("demo", help="simulate an ADAT and run the pipeline on it")
+    d.add_argument("-o", "--output-dir", default="somascan_qc_demo")
     return ap
 
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
+
+    if args.cmd == "simulate":
+        from .simulate import write_adat
+        truth = write_adat(args.output, n_analytes=args.n_analytes,
+                           n_per_plate=args.n_per_plate, seed=args.seed)
+        print(f"wrote {args.output}: {truth['n_wells']} wells "
+              f"({truth['n_samples']} study samples, {truth['n_buffer']} buffer) "
+              f"x {truth['n_analytes']} analytes")
+        return 0
+
+    if args.cmd == "demo":
+        from .simulate import write_adat
+        os.makedirs(args.output_dir, exist_ok=True)
+        adat = os.path.join(args.output_dir, "example.adat")
+        write_adat(adat)
+        man = run({"input_adat": adat, "output_dir": args.output_dir,
+                   "group_col": "SampleGroup", "output_prefix": "demo"})
+        r = man["results"]
+        print(f"demo OK: {r['study_samples']} -> {r['samples_out']} samples, "
+              f"{r['analytes_in']} -> {r['analytes_out']} analytes in "
+              f"{man['timings_s']['total_s']} s")
+        print(f"  report: {man['outputs']['report']['path']}")
+        return 0
 
     if args.cmd == "params":
         print(json.dumps(DEFAULTS, indent=2))

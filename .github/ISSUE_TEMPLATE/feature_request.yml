@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest a QC criterion, parameter or output
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you need and why
+    validations: {required: true}
+  - type: textarea
+    id: criterion
+    attributes:
+      label: If this is a QC criterion, how should it be computed?
+      description: Give the statistic, the threshold and a reference if there is one.
+  - type: checkboxes
+    id: compat
+    attributes:
+      label: Compatibility
+      options:
+        - label: This can default to flag-only so existing runs are unaffected

@@ -1,0 +1,14 @@
+# Exact environment this release was tested in (conda layer, osx-arm64).
+# Recreate with:  conda env create -f environment.lock.yml
+# For an unpinned, portable environment use environment.yml instead.
+name: somascan-qc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11.18
+  - numpy=2.4.6
+  - pandas=3.1.0
+  - matplotlib-base=3.11.2
+  - pyyaml=6.0.3
+  - pytest=9.2.0
+  - pip

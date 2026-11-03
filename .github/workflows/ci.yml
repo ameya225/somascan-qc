@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: tests (python ${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        include:
+          - os: macos-latest
+            python-version: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test,dev]"
+      - name: Lint
+        run: ruff check somascan_qc tests
+      - name: Tests
+        run: pytest -q
+      - name: End-to-end demo
+        run: |
+          somascan-qc demo -o demo_out
+          test -s demo_out/qc_report.html
+          test -s demo_out/demo_protein_x_sample_log2.tsv
+          test -s demo_out/demo_run_manifest.json
+      - name: Reproducibility check
+        run: |
+          somascan-qc simulate -o rep.adat
+          somascan-qc run -i rep.adat -o rep1 -g SampleGroup --quiet -c examples/deterministic.yaml
+          somascan-qc run -i rep.adat -o rep2 -g SampleGroup --quiet -c examples/deterministic.yaml
+          for f in rep1/*; do
+            case "$f" in *run_manifest.json) continue;; esac   # records absolute paths
+            diff -q "$f" "rep2/$(basename "$f")" || { echo "NOT REPRODUCIBLE: $f"; exit 1; }
+          done
+          echo "all outputs byte-identical across runs"
+      - name: Upload demo outputs
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-outputs
+          path: demo_out/
+
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: somascan-qc:ci
+      - name: Run demo inside the image
+        run: |
+          mkdir -p out && chmod 777 out
+          docker run --rm -v "$PWD/out":/data somascan-qc:ci demo -o /data
+          test -s out/qc_report.html
