@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------------------
+# somascan_qc parameters.  Everything here has a default; delete or comment a
+# line to accept the default.  Run `somascan-qc params` to print all defaults.
+# ---------------------------------------------------------------------------
+
+# --- input / output --------------------------------------------------------
+input_adat: /data/input.adat        # path to the ANML-normalized .adat
+output_dir: /data/out               # directory for the matrix, tables and report
+output_prefix: somascan             # prefix for every output filename
+sample_types_to_keep: [Sample]      # well types that enter the output matrix
+
+# --- grouping --------------------------------------------------------------
+# Any populated sample column of the ADAT (e.g. SampleGroup, TimePoint, SiteId,
+# PlateId).  Leave null to treat all samples as one pooled group.
+# `somascan-qc inspect -i file.adat` lists the usable columns.
+group_col: null
+
+# --- sample (row) QC -------------------------------------------------------
+norm_scale_min: 0.4                 # ANML/median scale factor acceptance window
+norm_scale_max: 2.5
+hyb_scale_min: 0.4                  # hybridization-control scale factor window
+hyb_scale_max: 2.5
+anml_fraction_min: 0.3              # min fraction of analytes used by ANML
+min_correlation_to_median: 0.8      # min r of a sample to the study median profile
+max_intensity_mad_z: 5.0            # |MAD-z| of per-sample median intensity
+sample_min_detect_rate: 0.5         # min fraction of analytes above LoD
+sample_exclude_on:                  # which flags actually remove a sample
+  - flag_rowcheck
+  - flag_norm_scale
+  - flag_hyb_scale
+  - flag_anml_fraction
+  - flag_low_correlation
+  - flag_intensity_outlier
+  - flag_low_detection
+
+# --- analyte (column) QC ---------------------------------------------------
+keep_analyte_types: [Protein]       # drops hybridization/spuriomer/non-biotin controls
+keep_organisms: [Human]             # [] keeps every organism (e.g. mouse analytes)
+cal_qc_ratio_min: 0.8               # SomaLogic calibration QC ratio acceptance
+cal_qc_ratio_max: 1.2
+max_replicate_cv: 0.2               # intra-plate CV from pooled QC wells
+detectability_filter: true
+lod_mad_multiplier: 4.9             # LoD = median(buffer) + k * MAD(buffer)
+min_detect_frac: 0.5                # fraction of samples above LoD within a group
+detect_rule: any                    # 'any' = keep if it passes in >=1 group; 'all' = every group
+analyte_exclude_on:                 # which flags actually remove an analyte
+  - flag_not_protein
+  - flag_organism
+  - flag_low_detection
+  # - flag_colcheck                 # uncomment to also drop SomaLogic ColCheck FLAG analytes
+  # - flag_high_cv
+
+# --- transform / output ----------------------------------------------------
+log_transform: log2                 # log2 | log10 | none
+write_rfu_matrix: true              # also write the untransformed RFU matrix
+plate_median_center: false          # optional per-plate median centering
+report_filename: qc_report.html
+compress_outputs: false             # write .tsv.gz instead of .tsv (useful for 11K matrices)
+matrix_column_id: sample_key        # ADAT sample column used for the matrix column names
+deterministic_report: false         # true = omit timestamp/runtime so the HTML is byte-identical

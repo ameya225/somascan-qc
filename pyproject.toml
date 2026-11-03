@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "somascan-qc"
+version = "1.0.0"
+description = "Reproducible QC and filtering of ANML-normalized SomaScan ADAT files into an analysis-ready protein x sample matrix with an HTML QC report."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+dependencies = ["numpy>=1.22", "pandas>=1.5", "matplotlib>=3.6", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+somascan-qc = "somascan_qc.cli:main"
+
+[tool.setuptools]
+packages = ["somascan_qc"]
