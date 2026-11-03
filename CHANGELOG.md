@@ -19,6 +19,9 @@ All notable changes to this project are documented here. The format follows
 ### Changed
 - The synthetic-ADAT generator moved from `tests/make_fixture.py` into the installable
   package as `somascan_qc.simulate`, so it ships with the container.
+- Lint reformatting under ruff. Data outputs are byte-identical to 1.0.0 on the same
+  input (verified by manifest checksums); the HTML report differs only in the version
+  string and one CSS line break.
 
 ## [1.0.0] - 2026-10-29
 
