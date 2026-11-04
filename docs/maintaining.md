@@ -9,7 +9,7 @@ The repository is published at <https://github.com/ameya225/somascan-qc> with ta
 
 | Job | What it proves |
 |---|---|
-| tests | pytest on Python 3.9-3.12 (Linux) and 3.12 (macOS) |
+| tests | pytest on Python 3.10-3.12 (Linux) and 3.12 (macOS, advisory) |
 | lint | `ruff check somascan_qc tests` |
 | demo | `somascan-qc demo` runs end to end and writes a report, a matrix and a manifest |
 | reproducibility | two runs of the same simulated ADAT are compared with `diff`; any byte difference fails the build |

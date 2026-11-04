@@ -7,7 +7,7 @@ name = "somascan-qc"
 version = "1.1.0"
 description = "Reproducible QC and filtering of ANML-normalized SomaScan ADAT files into an analysis-ready protein x sample matrix with an HTML QC report."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
 keywords = ["proteomics", "SomaScan", "SomaLogic", "aptamer", "quality control", "ADAT"]
@@ -17,7 +17,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -48,7 +47,7 @@ filterwarnings = ["error::FutureWarning"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]

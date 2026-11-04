@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ameya225/somascan-qc/actions/workflows/ci.yml/badge.svg)](https://github.com/ameya225/somascan-qc/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
 Turn a SomaLogic **ADAT** file (ANML-normalized SomaScan 5K / 7K / 11K) into an
 **analysis-ready protein x sample matrix** plus a **self-contained HTML QC report**,

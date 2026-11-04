@@ -19,7 +19,7 @@ make test          # pytest
 make demo          # end-to-end run on a simulated ADAT
 ```
 
-All three also run in CI on Python 3.9 through 3.12.
+All three also run in CI on Python 3.10 through 3.12.
 
 ## Project conventions
 

@@ -50,7 +50,7 @@ def fig_norm_scale(sqc: pd.DataFrame, p: dict) -> str:
     plates = sorted(study["PlateId"].unique()) if "PlateId" in study else ["all"]
     fig, axes = plt.subplots(1, len(cols), figsize=(3.1 * len(cols), 3.3), sharey=True)
     axes = np.atleast_1d(axes)
-    for ax, c in zip(axes, cols):
+    for ax, c in zip(axes, cols, strict=True):
         data = [study.loc[study.PlateId.eq(pl), c].dropna().values if "PlateId" in study
                 else study[c].dropna().values for pl in plates]
         bp = ax.boxplot(
@@ -164,7 +164,7 @@ def fig_pca(log2_mat: pd.DataFrame, plate: pd.Series, group: pd.Series) -> str:
         panels.append(("group", group))
     fig, axes = plt.subplots(1, len(panels), figsize=(4.6 * len(panels), 3.8))
     axes = np.atleast_1d(axes)
-    for ax, (name, lab) in zip(axes, panels):
+    for ax, (name, lab) in zip(axes, panels, strict=True):
         lab = lab.reindex(log2_mat.index).astype(str)
         for i, lv in enumerate(sorted(lab.unique())):
             m = (lab == lv).values
