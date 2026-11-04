@@ -280,6 +280,7 @@ adat = read_adat("mystudy.adat")       # adat.rfu, adat.samples, adat.analytes
 | [`docs/outputs.md`](docs/outputs.md) | every output file and a column dictionary for each table |
 | [`CHANGELOG.md`](CHANGELOG.md) | release history |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | development setup and project conventions |
+| [`docs/maintaining.md`](docs/maintaining.md) | CI jobs, release process and optional next steps |
 
 ## 14. Citing
 
