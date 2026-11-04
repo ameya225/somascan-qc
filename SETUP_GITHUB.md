@@ -9,8 +9,8 @@ Three things to do before the first push.
 `pyproject.toml` URLs, `CITATION.cff` and `CONTRIBUTING.md`:
 
 ```bash
-grep -rl 'ORG/somascan-qc' . --exclude-dir=.git | xargs sed -i '' 's|ORG/somascan-qc|YOUR-ORG/somascan-qc|g'   # macOS
-# grep -rl 'ORG/somascan-qc' . --exclude-dir=.git | xargs sed -i 's|ORG/somascan-qc|YOUR-ORG/somascan-qc|g'    # Linux
+grep -rl 'ameya225/somascan-qc' . --exclude-dir=.git | xargs sed -i '' 's|ameya225/somascan-qc|YOUR-ameya225/somascan-qc|g'   # macOS
+# grep -rl 'ameya225/somascan-qc' . --exclude-dir=.git | xargs sed -i 's|ameya225/somascan-qc|YOUR-ameya225/somascan-qc|g'    # Linux
 ```
 
 Then edit the author block in `CITATION.cff` (`GIVEN-NAME`, `FAMILY-NAME`,
@@ -36,12 +36,12 @@ If you would rather start from a clean single commit, delete `.git` and
 
 ```bash
 # with the GitHub CLI
-gh repo create YOUR-ORG/somascan-qc --public --source=. --remote=origin \
+gh repo create YOUR-ameya225/somascan-qc --public --source=. --remote=origin \
    --description "Reproducible QC and filtering for SomaScan ADAT data"
 git push -u origin main --follow-tags
 
 # or manually, after creating an empty repo in the web UI
-git remote add origin git@github.com:YOUR-ORG/somascan-qc.git
+git remote add origin git@github.com:YOUR-ameya225/somascan-qc.git
 git push -u origin main --follow-tags
 ```
 

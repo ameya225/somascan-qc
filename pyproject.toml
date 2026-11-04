@@ -30,10 +30,10 @@ test = ["pytest>=7"]
 dev = ["ruff>=0.5"]
 
 [project.urls]
-Homepage = "https://github.com/ORG/somascan-qc"
-Documentation = "https://github.com/ORG/somascan-qc#readme"
-Issues = "https://github.com/ORG/somascan-qc/issues"
-Changelog = "https://github.com/ORG/somascan-qc/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ameya225/somascan-qc"
+Documentation = "https://github.com/ameya225/somascan-qc#readme"
+Issues = "https://github.com/ameya225/somascan-qc/issues"
+Changelog = "https://github.com/ameya225/somascan-qc/blob/main/CHANGELOG.md"
 
 [project.scripts]
 somascan-qc = "somascan_qc.cli:main"

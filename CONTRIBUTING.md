@@ -3,7 +3,7 @@
 ## Development setup
 
 ```bash
-git clone https://github.com/ORG/somascan-qc.git
+git clone https://github.com/ameya225/somascan-qc.git
 cd somascan-qc
 conda env create -f environment.yml
 conda activate somascan-qc

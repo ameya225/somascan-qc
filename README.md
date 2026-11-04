@@ -1,6 +1,6 @@
 # somascan-qc
 
-[![CI](https://github.com/ORG/somascan-qc/actions/workflows/ci.yml/badge.svg)](https://github.com/ORG/somascan-qc/actions/workflows/ci.yml)
+[![CI](https://github.com/ameya225/somascan-qc/actions/workflows/ci.yml/badge.svg)](https://github.com/ameya225/somascan-qc/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 

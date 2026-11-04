@@ -1,4 +1,3 @@
-# TODO before publishing: replace the author block and the repository URL.
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "somascan-qc: reproducible QC and filtering for SomaScan ADAT data"
@@ -11,7 +10,7 @@ version: 1.1.0
 date-released: "2026-11-03"
 license: MIT
 type: software
-repository-code: "https://github.com/ORG/somascan-qc"
+repository-code: "https://github.com/ameya225/somascan-qc"
 keywords:
   - proteomics
   - SomaScan
@@ -20,6 +19,6 @@ keywords:
   - quality control
   - reproducible research
 authors:
-  - family-names: "FAMILY-NAME"
-    given-names: "GIVEN-NAME"
-    affiliation: "AFFILIATION"
+  - family-names: "Kulkarni"
+    given-names: "Ameya"
+    alias: "ameya225"
