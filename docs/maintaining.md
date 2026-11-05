@@ -9,11 +9,12 @@ The repository is published at <https://github.com/ameya225/somascan-qc> with ta
 
 | Job | What it proves |
 |---|---|
-| tests | pytest on Python 3.10-3.12 (Linux) and 3.12 (macOS, advisory) |
+| tests | pytest on Python 3.10-3.12 (Linux) |
 | lint | `ruff check somascan_qc tests` |
 | demo | `somascan-qc demo` runs end to end and writes a report, a matrix and a manifest |
 | reproducibility | two runs of the same simulated ADAT are compared with `diff`; any byte difference fails the build |
 | docker build | the image builds and the demo runs inside it |
+| tests (macOS) | **on demand only** - start it from the Actions tab with "Run workflow". Hosted macOS arm64 runners are capacity-constrained and jobs are often never acquired, which ends a run as cancelled; a cancelled job fails the run even with `continue-on-error`, so macOS cannot sit on the push path |
 
 The Docker image and the workflows were never executed in the environment where this
 repository was assembled, so the first CI run is their first real test. If the Docker

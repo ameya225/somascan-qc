@@ -20,9 +20,11 @@ All notable changes to this project are documented here. The format follows
 - Minimum supported Python is now 3.10. Python 3.9 reached end of life in October 2025
   and is no longer provided on the `ubuntu-latest` GitHub runner (Ubuntu 26.04), so the
   3.9 claim could not be tested; it was dropped rather than left unverified.
-- The macOS CI job is advisory (`continue-on-error`). macOS arm64 runners are capacity
-  constrained and jobs are sometimes never acquired; correctness is covered by the Linux
-  matrix.
+- The macOS CI check moved off the push path into a separate `test-macos` job that runs
+  only on manual dispatch. Hosted macOS arm64 runners are capacity-constrained and the
+  job was regularly never acquired, ending the run as cancelled after 15 minutes;
+  `continue-on-error` absorbs a failed job but not a cancelled one, so the build went
+  red for reasons unrelated to the code. Correctness is covered by the Linux matrix.
 
 ### Fixed
 - The HTML report footer labelled its elapsed time as the run's wall time, but the
